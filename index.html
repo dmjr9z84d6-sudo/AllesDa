@@ -6,7 +6,10 @@
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="theme-color" content="#07070C">
-  <title>AllesDa — Immobilienverwaltung</title>
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+  <meta http-equiv="Pragma" content="no-cache">
+  <meta http-equiv="Expires" content="0">
+  <title>AllesDa v2 — Immobilienverwaltung</title>
   <style>
     html, body {
       margin: 0; padding: 0;
@@ -56,7 +59,8 @@
   <div id="ladeIndikator">
     <div class="spinner"></div>
     <div class="titel">Alles<span class="akzent">Da</span></div>
-    <div class="sub">wird geladen&hellip;</div>
+    <div class="sub">v2 &middot; 2026-05-24</div>
+    <div class="sub" style="margin-top:4px;">wird geladen&hellip;</div>
   </div>
 
   <!-- React + ReactDOM (UMD-Build, läuft ohne Bundler) -->
@@ -68,6 +72,8 @@
 const { useState, useRef, useEffect, createContext, useContext, Fragment } = React;
 const FONT_URL = "https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap";
 const FONT = "'Plus Jakarta Sans', sans-serif";
+const APP_VERSION = 2;
+const APP_BUILD = "2026-05-24";
 const DARK = { bg: "#07070C", surface: "#0D0D16", card: "#13131F", border: "#252540", text: "#F0F0FF", sub: "#A0A0CD", muted: "#7575A0", header: "#0D0D14" };
 const LIGHT = { bg: "#ECEEF3", surface: "#F4F6FA", card: "#FFFFFF", border: "#D8DCE8", text: "#0F1022", sub: "#4A5072", muted: "#737896", header: "#FFFFFF" };
 const ACCENT = "#0E7490";
@@ -11637,7 +11643,7 @@ function SektionDaten({
     background: "#F59E0B",
     flexShrink: 0,
     marginTop: 5
-  } }), /* @__PURE__ */ React.createElement("span", null, /* @__PURE__ */ React.createElement("strong", null, "Speichern nicht verfügbar."), ' Diese Umgebung (z.B. Vorschau in Claude oder privater Browsermodus) blockiert den lokalen Speicher. Änderungen gehen beim Reload verloren. Lade die Datei lokal herunter und öffne sie in deinem Browser — dann funktioniert das Auto-Speichern. Zwischendurch kannst du oben mit „Exportieren" eine Datei-Sicherung anlegen.')), /* @__PURE__ */ React.createElement("div", { style: { fontSize: 12, color: t.sub, lineHeight: 1.5 } }, "Aktuell werden alle Daten lokal im ", /* @__PURE__ */ React.createElement("strong", { style: { color: t.text } }, "Browser-Speicher"), " dieses Geräts abgelegt. Beim Wechsel des Geräts oder beim Löschen des Browser-Speichers sind die Daten weg — bitte vorher exportieren.", /* @__PURE__ */ React.createElement("br", null), /* @__PURE__ */ React.createElement("br", null), /* @__PURE__ */ React.createElement("strong", { style: { color: t.text } }, "Geplant:"), " automatische Synchronisation über die Cloud, damit die Einstellungen auf allen Geräten verfügbar sind und mehrere Benutzer am gleichen Datenbestand arbeiten können.")));
+  } }), /* @__PURE__ */ React.createElement("span", null, /* @__PURE__ */ React.createElement("strong", null, "Speichern nicht verfügbar."), ' Diese Umgebung (z.B. Vorschau in Claude oder privater Browsermodus) blockiert den lokalen Speicher. Änderungen gehen beim Reload verloren. Lade die Datei lokal herunter und öffne sie in deinem Browser — dann funktioniert das Auto-Speichern. Zwischendurch kannst du oben mit „Exportieren" eine Datei-Sicherung anlegen.')), /* @__PURE__ */ React.createElement("div", { style: { fontSize: 12, color: t.sub, lineHeight: 1.5 } }, "Aktuell werden alle Daten lokal im ", /* @__PURE__ */ React.createElement("strong", { style: { color: t.text } }, "Browser-Speicher"), " dieses Geräts abgelegt. Beim Wechsel des Geräts oder beim Löschen des Browser-Speichers sind die Daten weg — bitte vorher exportieren.", /* @__PURE__ */ React.createElement("br", null), /* @__PURE__ */ React.createElement("br", null), /* @__PURE__ */ React.createElement("strong", { style: { color: t.text } }, "Geplant:"), " automatische Synchronisation über die Cloud, damit die Einstellungen auf allen Geräten verfügbar sind und mehrere Benutzer am gleichen Datenbestand arbeiten können.")), /* @__PURE__ */ React.createElement(EinstellKarte, { title: "Über AllesDa", t, accent }, /* @__PURE__ */ React.createElement("div", { style: { display: "flex", alignItems: "center", gap: 12, padding: "8px 0" } }, /* @__PURE__ */ React.createElement("div", { style: { flex: 1 } }, /* @__PURE__ */ React.createElement("div", { style: { fontWeight: 700, fontSize: 14, color: t.text } }, "AllesDa ", /* @__PURE__ */ React.createElement("span", { style: { color: accent } }, "v", APP_VERSION)), /* @__PURE__ */ React.createElement("div", { style: { fontSize: 11, color: t.sub, marginTop: 4 } }, "Build: ", APP_BUILD)))));
 }
 const SEKTIONEN = [
   { id: "profil", icon: "user", farbe: "#0E7490", title: "Mein Profil", sub: "Name, Anrede, Kontaktdaten" },
@@ -13073,8 +13079,18 @@ function App() {
     background: "none",
     border: "none",
     cursor: "pointer",
-    padding: 0
-  } }, /* @__PURE__ */ React.createElement("span", { style: { fontWeight: 800, fontSize: 18, letterSpacing: "-0.03em" } }, /* @__PURE__ */ React.createElement("span", { style: { color: t.text } }, "Alles"), /* @__PURE__ */ React.createElement("span", { style: { color: ACCENT } }, "Da"))), /* @__PURE__ */ React.createElement("div", { style: { minWidth: 0 } }, settings.filterAktiv ? /* @__PURE__ */ React.createElement(
+    padding: 0,
+    display: "flex",
+    flexDirection: "column",
+    alignItems: "flex-start",
+    lineHeight: 1
+  } }, /* @__PURE__ */ React.createElement("span", { style: { fontWeight: 800, fontSize: 18, letterSpacing: "-0.03em" } }, /* @__PURE__ */ React.createElement("span", { style: { color: t.text } }, "Alles"), /* @__PURE__ */ React.createElement("span", { style: { color: ACCENT } }, "Da")), /* @__PURE__ */ React.createElement("span", { style: {
+    fontSize: 9,
+    color: t.muted,
+    marginTop: 2,
+    letterSpacing: "0.05em",
+    fontVariantNumeric: "tabular-nums"
+  } }, "v", APP_VERSION)), /* @__PURE__ */ React.createElement("div", { style: { minWidth: 0 } }, settings.filterAktiv ? /* @__PURE__ */ React.createElement(
     FilterDropdown,
     {
       optionen: filterOptionen,
@@ -13183,8 +13199,18 @@ function App() {
     border: "none",
     cursor: "pointer",
     padding: 0,
-    flexShrink: 0
-  } }, /* @__PURE__ */ React.createElement("span", { style: { fontWeight: 800, fontSize: 18, letterSpacing: "-0.03em" } }, /* @__PURE__ */ React.createElement("span", { style: { color: t.text } }, "Alles"), /* @__PURE__ */ React.createElement("span", { style: { color: ACCENT } }, "Da"))), settings.filterAktiv ? /* @__PURE__ */ React.createElement(
+    flexShrink: 0,
+    display: "flex",
+    flexDirection: "column",
+    alignItems: "flex-start",
+    lineHeight: 1
+  } }, /* @__PURE__ */ React.createElement("span", { style: { fontWeight: 800, fontSize: 18, letterSpacing: "-0.03em" } }, /* @__PURE__ */ React.createElement("span", { style: { color: t.text } }, "Alles"), /* @__PURE__ */ React.createElement("span", { style: { color: ACCENT } }, "Da")), /* @__PURE__ */ React.createElement("span", { style: {
+    fontSize: 9,
+    color: t.muted,
+    marginTop: 2,
+    letterSpacing: "0.05em",
+    fontVariantNumeric: "tabular-nums"
+  } }, "v", APP_VERSION)), settings.filterAktiv ? /* @__PURE__ */ React.createElement(
     FilterDropdown,
     {
       optionen: filterOptionen,
