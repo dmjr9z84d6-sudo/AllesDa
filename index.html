@@ -9,7 +9,7 @@
   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
   <meta http-equiv="Pragma" content="no-cache">
   <meta http-equiv="Expires" content="0">
-  <title>AllesDa v2 — Immobilienverwaltung</title>
+  <title>AllesDa v3 — Immobilienverwaltung</title>
   <style>
     html, body {
       margin: 0; padding: 0;
@@ -59,7 +59,7 @@
   <div id="ladeIndikator">
     <div class="spinner"></div>
     <div class="titel">Alles<span class="akzent">Da</span></div>
-    <div class="sub">v2 &middot; 2026-05-24</div>
+    <div class="sub">v3 &middot; 2026-05-24</div>
     <div class="sub" style="margin-top:4px;">wird geladen&hellip;</div>
   </div>
 
@@ -72,7 +72,7 @@
 const { useState, useRef, useEffect, createContext, useContext, Fragment } = React;
 const FONT_URL = "https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap";
 const FONT = "'Plus Jakarta Sans', sans-serif";
-const APP_VERSION = 2;
+const APP_VERSION = 3;
 const APP_BUILD = "2026-05-24";
 const DARK = { bg: "#07070C", surface: "#0D0D16", card: "#13131F", border: "#252540", text: "#F0F0FF", sub: "#A0A0CD", muted: "#7575A0", header: "#0D0D14" };
 const LIGHT = { bg: "#ECEEF3", surface: "#F4F6FA", card: "#FFFFFF", border: "#D8DCE8", text: "#0F1022", sub: "#4A5072", muted: "#737896", header: "#FFFFFF" };
@@ -10130,7 +10130,7 @@ function KontakteMasterDetail({
       fontWeight: 600,
       marginBottom: 8,
       alignSelf: "flex-start"
-    } }, /* @__PURE__ */ React.createElement(I, { name: "chevron-left", size: 12, color: t.text }), "Zurück zur Liste"), /* @__PURE__ */ React.createElement("div", { style: { flex: 1, minHeight: 0, overflowY: "auto" } }, /* @__PURE__ */ React.createElement(
+    } }, /* @__PURE__ */ React.createElement(I, { name: "chevron-left", size: 12, color: t.text }), "Zurück zur Liste"), /* @__PURE__ */ React.createElement("div", { style: { flex: 1, minHeight: 0 } }, /* @__PURE__ */ React.createElement(
       KontaktDetailKarte,
       {
         k: aktivK,
@@ -10303,7 +10303,7 @@ function KontakteScreen({
       fontWeight: 600,
       marginBottom: 8,
       alignSelf: "flex-start"
-    } }, /* @__PURE__ */ React.createElement(I, { name: "chevron-left", size: 12, color: t.text }), "Zurück zur Liste"), /* @__PURE__ */ React.createElement("div", { style: { flex: 1, minHeight: 0, overflowY: "auto" } }, /* @__PURE__ */ React.createElement(
+    } }, /* @__PURE__ */ React.createElement(I, { name: "chevron-left", size: 12, color: t.text }), "Zurück zur Liste"), /* @__PURE__ */ React.createElement("div", { style: { flex: 1, minHeight: 0 } }, /* @__PURE__ */ React.createElement(
       KontaktDetailKarte,
       {
         k: aktivK,
@@ -10332,7 +10332,7 @@ function KontakteScreen({
       onClick: () => setAktiv(k.id)
     }
   )));
-  return /* @__PURE__ */ React.createElement("div", { style: { flex: 1, minHeight: 0, overflowY: "auto" } }, zeigePersonen && personenGef.length > 0 && renderGruppe(personenGef, "person"), zeigeFirmen && firmenGef.length > 0 && /* @__PURE__ */ React.createElement("div", { style: { marginTop: zeigePersonen && personenGef.length > 0 ? 16 : 0 } }, renderGruppe(firmenGef, "firma")), gefiltert.length === 0 && /* @__PURE__ */ React.createElement("div", { style: {
+  return /* @__PURE__ */ React.createElement("div", { style: { flex: 1, minHeight: 0 } }, zeigePersonen && personenGef.length > 0 && renderGruppe(personenGef, "person"), zeigeFirmen && firmenGef.length > 0 && /* @__PURE__ */ React.createElement("div", { style: { marginTop: zeigePersonen && personenGef.length > 0 ? 16 : 0 } }, renderGruppe(firmenGef, "firma")), gefiltert.length === 0 && /* @__PURE__ */ React.createElement("div", { style: {
     fontSize: 13,
     color: t.sub,
     textAlign: "center",
@@ -12015,7 +12015,7 @@ function EinstellungenZentrale({
     fontWeight: 600,
     marginBottom: 8,
     alignSelf: "flex-start"
-  } }, /* @__PURE__ */ React.createElement(I, { name: "chevron-left", size: 12, color: t.text }), "Zurück zur Liste"), /* @__PURE__ */ React.createElement("div", { style: { flex: 1, minHeight: 0, overflowY: "auto" } }, renderSektionDetail(offenSektion))), !istDesktop && (!offenSektion || editReihenfolge) && /* @__PURE__ */ React.createElement("div", { style: { flex: 1, minHeight: 0, overflowY: "auto" } }, /* @__PURE__ */ React.createElement("div", { style: {
+  } }, /* @__PURE__ */ React.createElement(I, { name: "chevron-left", size: 12, color: t.text }), "Zurück zur Liste"), /* @__PURE__ */ React.createElement("div", { style: { flex: 1, minHeight: 0 } }, renderSektionDetail(offenSektion))), !istDesktop && (!offenSektion || editReihenfolge) && /* @__PURE__ */ React.createElement("div", { style: { flex: 1, minHeight: 0 } }, /* @__PURE__ */ React.createElement("div", { style: {
     display: "grid",
     gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))",
     gap: 10
@@ -12634,7 +12634,7 @@ function ObjekteMasterDetail({
       fontWeight: 600,
       marginBottom: 8,
       alignSelf: "flex-start"
-    } }, /* @__PURE__ */ React.createElement(I, { name: "chevron-left", size: 12, color: t.text }), "Zurück zur Liste"), /* @__PURE__ */ React.createElement("div", { style: { flex: 1, minHeight: 0, overflowY: "auto" } }, renderDetail()));
+    } }, /* @__PURE__ */ React.createElement(I, { name: "chevron-left", size: 12, color: t.text }), "Zurück zur Liste"), /* @__PURE__ */ React.createElement("div", { style: { flex: 1, minHeight: 0 } }, renderDetail()));
   }
   return /* @__PURE__ */ React.createElement("div", { ref: mdRef, style: {
     display: "flex",
@@ -13074,7 +13074,7 @@ function App() {
     gridTemplateColumns: "auto 1fr auto",
     alignItems: "center",
     gap: 10,
-    padding: "10px 14px"
+    padding: "6px 14px 8px"
   } }, /* @__PURE__ */ React.createElement("button", { onClick: goHome, style: {
     background: "none",
     border: "none",
@@ -13495,12 +13495,7 @@ function App() {
         );
       }
       if (hatOffen && !istDesktop) {
-        return /* @__PURE__ */ React.createElement("div", { style: {
-          flex: 1,
-          minHeight: 0,
-          display: "flex",
-          flexDirection: "column"
-        } }, /* @__PURE__ */ React.createElement("button", { onClick: () => setExpandedVEId(null), style: {
+        return /* @__PURE__ */ React.createElement("div", { style: { display: "flex", flexDirection: "column" } }, /* @__PURE__ */ React.createElement("button", { onClick: () => setExpandedVEId(null), style: {
           display: "flex",
           alignItems: "center",
           gap: 6,
@@ -13515,7 +13510,7 @@ function App() {
           fontWeight: 600,
           marginBottom: 8,
           alignSelf: "flex-start"
-        } }, /* @__PURE__ */ React.createElement(I, { name: "chevron-left", size: 12, color: t.text }), "Zurück zur Liste"), /* @__PURE__ */ React.createElement("div", { style: { flex: 1, minHeight: 0, overflowY: "auto" } }, /* @__PURE__ */ React.createElement("div", { style: {
+        } }, /* @__PURE__ */ React.createElement(I, { name: "chevron-left", size: 12, color: t.text }), "Zurück zur Liste"), /* @__PURE__ */ React.createElement("div", { style: {
           background: objektAccent + "08",
           border: `1px solid ${objektAccent}`,
           borderRadius: 12,
@@ -13540,9 +13535,9 @@ function App() {
             },
             onBack: () => setExpandedVEId(null)
           }
-        ))));
+        )));
       }
-      return /* @__PURE__ */ React.createElement("div", { style: { flex: 1, minHeight: 0, overflowY: "auto" } }, /* @__PURE__ */ React.createElement("div", { style: {
+      return /* @__PURE__ */ React.createElement("div", { style: {
         display: "grid",
         gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))",
         gap: 10
@@ -13557,7 +13552,7 @@ function App() {
           id: "obj-" + ve.id,
           onClick: () => setExpandedVEId(ve.id)
         }
-      ))));
+      )));
     })(), gefiltert.length === 0 && /* @__PURE__ */ React.createElement("div", { style: {
       fontSize: 12,
       color: t.muted,
