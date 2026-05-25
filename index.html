@@ -9,7 +9,7 @@
   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
   <meta http-equiv="Pragma" content="no-cache">
   <meta http-equiv="Expires" content="0">
-  <title>AllesDa v4 — Immobilienverwaltung</title>
+  <title>AllesDa v5 — Immobilienverwaltung</title>
   <style>
     html, body {
       margin: 0; padding: 0;
@@ -59,7 +59,7 @@
   <div id="ladeIndikator">
     <div class="spinner"></div>
     <div class="titel">Alles<span class="akzent">Da</span></div>
-    <div class="sub">v4 &middot; 2026-05-25</div>
+    <div class="sub">v5 &middot; 2026-05-25</div>
     <div class="sub" style="margin-top:4px;">wird geladen&hellip;</div>
   </div>
 
@@ -69,10 +69,13 @@
 
   <!-- App-Code (vorkompiliert mit esbuild aus allesda_v3.jsx) -->
   <script>
+var __defProp = Object.defineProperty;
+var __defNormalProp = (obj, key, value) => key in obj ? __defProp(obj, key, { enumerable: true, configurable: true, writable: true, value }) : obj[key] = value;
+var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "symbol" ? key + "" : key, value);
 const { useState, useRef, useEffect, createContext, useContext, Fragment } = React;
 const FONT_URL = "https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap";
 const FONT = "'Plus Jakarta Sans', sans-serif";
-const APP_VERSION = 4;
+const APP_VERSION = 5;
 const APP_BUILD = "2026-05-25";
 const DARK = { bg: "#07070C", surface: "#0D0D16", card: "#13131F", border: "#252540", text: "#F0F0FF", sub: "#A0A0CD", muted: "#7575A0", header: "#0D0D14" };
 const LIGHT = { bg: "#ECEEF3", surface: "#F4F6FA", card: "#FFFFFF", border: "#D8DCE8", text: "#0F1022", sub: "#4A5072", muted: "#737896", header: "#FFFFFF" };
@@ -12769,6 +12772,121 @@ function StatusBand({
     )
   );
 }
+class ErrorBoundary extends React.Component {
+  constructor(props) {
+    super(props);
+    __publicField(this, "reset", () => {
+      this.setState({ hasError: false, error: null, info: null });
+    });
+    this.state = { hasError: false, error: null, info: null };
+  }
+  static getDerivedStateFromError(error) {
+    return { hasError: true, error };
+  }
+  componentDidCatch(error, info) {
+    try {
+      const log = {
+        zeit: (/* @__PURE__ */ new Date()).toISOString(),
+        nachricht: error && error.message ? error.message : String(error),
+        stack: error && error.stack ? error.stack : null,
+        komponente: info && info.componentStack ? info.componentStack : null
+      };
+      localStorage.setItem("allesda:lastError", JSON.stringify(log));
+    } catch (e) {
+    }
+    this.setState({ info });
+    console.error("AllesDa Render-Fehler:", error, info);
+  }
+  render() {
+    if (!this.state.hasError) return this.props.children;
+    const err = this.state.error;
+    const msg = err && err.message ? err.message : String(err);
+    const stack = err && err.stack ? err.stack : "(kein Stack-Trace)";
+    const compStack = this.state.info && this.state.info.componentStack ? this.state.info.componentStack : "";
+    return /* @__PURE__ */ React.createElement("div", { style: {
+      position: "fixed",
+      top: 0,
+      right: 0,
+      bottom: 0,
+      left: 0,
+      background: "#1A1A2E",
+      color: "#F0F0FF",
+      padding: "max(20px, env(safe-area-inset-top, 0px)) 20px max(20px, env(safe-area-inset-bottom, 0px))",
+      overflowY: "auto",
+      fontFamily: "-apple-system, BlinkMacSystemFont, sans-serif",
+      zIndex: 99999
+    } }, /* @__PURE__ */ React.createElement("div", { style: { maxWidth: 720, margin: "0 auto" } }, /* @__PURE__ */ React.createElement("div", { style: {
+      display: "inline-block",
+      padding: "4px 10px",
+      borderRadius: 999,
+      background: "#EF444420",
+      color: "#EF4444",
+      fontSize: 11,
+      fontWeight: 700,
+      letterSpacing: "0.05em",
+      textTransform: "uppercase",
+      marginBottom: 16
+    } }, "Render-Fehler in AllesDa"), /* @__PURE__ */ React.createElement("h2", { style: { margin: "0 0 8px", fontSize: 20, fontWeight: 700, color: "#F0F0FF" } }, msg), /* @__PURE__ */ React.createElement("p", { style: { margin: "0 0 16px", fontSize: 13, color: "#A0A0CD", lineHeight: 1.5 } }, 'Etwas in der App hat einen Fehler ausgelöst. Die wichtigsten Daten sind sicher (lokal gespeichert). Du kannst die App weiter benutzen, indem du unten auf „Weiter" tippst.'), /* @__PURE__ */ React.createElement("div", { style: { display: "flex", gap: 8, marginBottom: 20, flexWrap: "wrap" } }, /* @__PURE__ */ React.createElement("button", { onClick: this.reset, style: {
+      padding: "10px 18px",
+      background: "#0E7490",
+      color: "#fff",
+      border: "none",
+      borderRadius: 8,
+      cursor: "pointer",
+      fontWeight: 600,
+      fontSize: 13
+    } }, "Weiter"), /* @__PURE__ */ React.createElement("button", { onClick: () => {
+      const text = "Fehler: " + msg + "\n\nStack:\n" + stack + "\n\nKomponenten:\n" + compStack;
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(text);
+        alert("Fehler-Details in die Zwischenablage kopiert.");
+      } else {
+        window.prompt("Fehler-Details (kopieren mit Cmd+C / Strg+C):", text);
+      }
+    }, style: {
+      padding: "10px 18px",
+      background: "transparent",
+      color: "#F0F0FF",
+      border: "1px solid #6B7280",
+      borderRadius: 8,
+      cursor: "pointer",
+      fontWeight: 600,
+      fontSize: 13
+    } }, "Fehler kopieren"), /* @__PURE__ */ React.createElement("button", { onClick: () => window.location.reload(), style: {
+      padding: "10px 18px",
+      background: "transparent",
+      color: "#F0F0FF",
+      border: "1px solid #6B7280",
+      borderRadius: 8,
+      cursor: "pointer",
+      fontWeight: 600,
+      fontSize: 13
+    } }, "App neu laden")), /* @__PURE__ */ React.createElement("details", { style: { marginTop: 16, fontSize: 11, color: "#A0A0CD" } }, /* @__PURE__ */ React.createElement("summary", { style: {
+      cursor: "pointer",
+      padding: "6px 0",
+      color: "#F0F0FF",
+      fontWeight: 600
+    } }, "Technische Details"), /* @__PURE__ */ React.createElement("div", { style: { marginTop: 8 } }, /* @__PURE__ */ React.createElement("div", { style: { fontWeight: 700, marginBottom: 4 } }, "Stack-Trace:"), /* @__PURE__ */ React.createElement("pre", { style: {
+      background: "#000",
+      padding: 12,
+      borderRadius: 6,
+      overflowX: "auto",
+      fontSize: 10,
+      lineHeight: 1.4,
+      whiteSpace: "pre-wrap",
+      wordBreak: "break-word"
+    } }, stack), compStack && /* @__PURE__ */ React.createElement(React.Fragment, null, /* @__PURE__ */ React.createElement("div", { style: { fontWeight: 700, margin: "12px 0 4px" } }, "Komponenten-Stack:"), /* @__PURE__ */ React.createElement("pre", { style: {
+      background: "#000",
+      padding: 12,
+      borderRadius: 6,
+      overflowX: "auto",
+      fontSize: 10,
+      lineHeight: 1.4,
+      whiteSpace: "pre-wrap",
+      wordBreak: "break-word"
+    } }, compStack))))));
+  }
+}
 function App() {
   const [mode, setMode] = useState("dark");
   const [settings, setSettings] = useState(DEFAULT_SETTINGS);
@@ -13820,7 +13938,9 @@ function App() {
   try {
     var container = document.getElementById("root");
     if (!container) throw new Error("#root nicht gefunden");
-    ReactDOM.createRoot(container).render(React.createElement(App));
+    ReactDOM.createRoot(container).render(
+      React.createElement(ErrorBoundary, null, React.createElement(App))
+    );
     if (ladeIndikator) {
       setTimeout(function() {
         ladeIndikator.style.opacity = "0";
