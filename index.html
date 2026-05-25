@@ -9,7 +9,7 @@
   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
   <meta http-equiv="Pragma" content="no-cache">
   <meta http-equiv="Expires" content="0">
-  <title>AllesDa v5 — Immobilienverwaltung</title>
+  <title>AllesDa v6 — Immobilienverwaltung</title>
   <style>
     html, body {
       margin: 0; padding: 0;
@@ -59,7 +59,7 @@
   <div id="ladeIndikator">
     <div class="spinner"></div>
     <div class="titel">Alles<span class="akzent">Da</span></div>
-    <div class="sub">v5 &middot; 2026-05-25</div>
+    <div class="sub">v6 &middot; 2026-05-25</div>
     <div class="sub" style="margin-top:4px;">wird geladen&hellip;</div>
   </div>
 
@@ -75,7 +75,7 @@ var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "sy
 const { useState, useRef, useEffect, createContext, useContext, Fragment } = React;
 const FONT_URL = "https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap";
 const FONT = "'Plus Jakarta Sans', sans-serif";
-const APP_VERSION = 5;
+const APP_VERSION = 6;
 const APP_BUILD = "2026-05-25";
 const DARK = { bg: "#07070C", surface: "#0D0D16", card: "#13131F", border: "#252540", text: "#F0F0FF", sub: "#A0A0CD", muted: "#7575A0", header: "#0D0D14" };
 const LIGHT = { bg: "#ECEEF3", surface: "#F4F6FA", card: "#FFFFFF", border: "#D8DCE8", text: "#0F1022", sub: "#4A5072", muted: "#737896", header: "#FFFFFF" };
@@ -1815,13 +1815,15 @@ function mappeEinheiten(rows, vesMap) {
     const einheitId = String(r["Einheit-ID"]);
     ve.einheiten.push({
       id: einheitId,
+      nr: r["Einheit-Bez."] || "",
+      verwNr: r["Verwaltungsnr."] || "",
       typ: r["Typ"] || "Wohneigentum",
-      bez: r["Einheit-Bez."] || "",
-      flaeche: r["Fläche m²"] || null,
+      flaeche: r["Fläche m²"] ? String(r["Fläche m²"]) + " m²" : "",
       mea: r["MEA"] || "",
-      etage: r["Lage"] || "",
-      verwaltungsnr: r["Verwaltungsnr."] || null,
+      lage: r["Lage"] || "",
       zimmer: r["Zimmer"] || null,
+      eigentuemer: [],
+      mieter: [],
       notizen: r["Notiz"] || ""
     });
     einheitToVe[einheitId] = veId;
@@ -1881,16 +1883,23 @@ function mappeFirmen(rows) {
     };
   });
 }
-function mappeZuordnungen(rows, kontakteMap, einheitToVe) {
+function mappeZuordnungen(rows, kontakteMap, einheitToVe, vesMap) {
   let zugewiesen = 0;
   let verwaist = 0;
+  const einheitMap = {};
+  Object.keys(vesMap).forEach(function(veId) {
+    vesMap[veId].einheiten.forEach(function(e) {
+      einheitMap[e.id] = e;
+    });
+  });
   rows.filter(function(r) {
     return r["Einheit-ID"] && r["Person-ID"] && r["Rolle"];
   }).forEach(function(r) {
     const kontakt = kontakteMap[String(r["Person-ID"])];
     const einheitId = String(r["Einheit-ID"]);
     const veId = einheitToVe[einheitId];
-    if (!kontakt || !veId) {
+    const einheit = einheitMap[einheitId];
+    if (!kontakt || !veId || !einheit) {
       verwaist++;
       return;
     }
@@ -1900,16 +1909,35 @@ function mappeZuordnungen(rows, kontakteMap, einheitToVe) {
       rolle = "Verwaltungsbeirat";
       vorsitz = true;
     }
+    const status = ableiteStatus(r["Bis (Datum)"]);
     const zuweisung = {
       veId,
       einheitId,
       rolle,
-      status: ableiteStatus(r["Bis (Datum)"]),
+      status,
       von: r["Von (Datum)"] || null,
       bis: r["Bis (Datum)"] || null
     };
     if (vorsitz) zuweisung.vorsitz = true;
     kontakt.objektZuweisungen.push(zuweisung);
+    const eintrag = {
+      kontaktId: kontakt.id,
+      status,
+      von: r["Von (Datum)"] || "",
+      bis: r["Bis (Datum)"] || ""
+    };
+    const rolleLc = rolle.toLowerCase();
+    if (rolleLc.indexOf("eigent") >= 0) {
+      if (r["Grundbuch"] && String(r["Grundbuch"]).toLowerCase().indexOf("ja") >= 0) {
+        eintrag.grundbuch = true;
+      }
+      if (r["Selbstnutzer"] && String(r["Selbstnutzer"]).toLowerCase().indexOf("ja") >= 0) {
+        eintrag.selbstnutzer = true;
+      }
+      einheit.eigentuemer.push(eintrag);
+    } else if (rolleLc.indexOf("mieter") >= 0) {
+      einheit.mieter.push(eintrag);
+    }
     zugewiesen++;
   });
   return { zugewiesen, verwaist };
@@ -1964,7 +1992,7 @@ async function importiereExcel(file) {
   kontakte.forEach(function(k) {
     kontakteMap[k.id] = k;
   });
-  const zuordnungenInfo = mappeZuordnungen(sheets.zuordnungen, kontakteMap, einheitenInfo.einheitToVe);
+  const zuordnungenInfo = mappeZuordnungen(sheets.zuordnungen, kontakteMap, einheitenInfo.einheitToVe, vesMap);
   if (zuordnungenInfo.verwaist > 0) {
     warnungen.push(zuordnungenInfo.verwaist + " Zuordnung(en) verweisen auf unbekannte Einheit- oder Person-IDs");
   }
@@ -6310,7 +6338,10 @@ function VEDetail({
   };
   const beteiligteIds = [...new Set(
     ve.einheiten.flatMap(
-      (e) => [...e.eigentuemer.map((et) => et.kontaktId), ...e.mieter.map((m) => m.kontaktId)]
+      (e) => [
+        ...(e.eigentuemer || []).map((et) => et.kontaktId),
+        ...(e.mieter || []).map((m) => m.kontaktId)
+      ]
     ).filter(Boolean)
   )];
   const beteiligte = beteiligteIds.map((id) => kontakte.find((k) => k.id === id)).filter(Boolean);
