@@ -9,7 +9,7 @@
   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
   <meta http-equiv="Pragma" content="no-cache">
   <meta http-equiv="Expires" content="0">
-  <title>AllesDa v6 — Immobilienverwaltung</title>
+  <title>AllesDa v7 — Immobilienverwaltung</title>
   <style>
     html, body {
       margin: 0; padding: 0;
@@ -59,7 +59,7 @@
   <div id="ladeIndikator">
     <div class="spinner"></div>
     <div class="titel">Alles<span class="akzent">Da</span></div>
-    <div class="sub">v6 &middot; 2026-05-25</div>
+    <div class="sub">v7 &middot; 2026-05-25</div>
     <div class="sub" style="margin-top:4px;">wird geladen&hellip;</div>
   </div>
 
@@ -75,7 +75,7 @@ var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "sy
 const { useState, useRef, useEffect, createContext, useContext, Fragment } = React;
 const FONT_URL = "https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap";
 const FONT = "'Plus Jakarta Sans', sans-serif";
-const APP_VERSION = 6;
+const APP_VERSION = 7;
 const APP_BUILD = "2026-05-25";
 const DARK = { bg: "#07070C", surface: "#0D0D16", card: "#13131F", border: "#252540", text: "#F0F0FF", sub: "#A0A0CD", muted: "#7575A0", header: "#0D0D14" };
 const LIGHT = { bg: "#ECEEF3", surface: "#F4F6FA", card: "#FFFFFF", border: "#D8DCE8", text: "#0F1022", sub: "#4A5072", muted: "#737896", header: "#FFFFFF" };
@@ -1841,18 +1841,24 @@ function mappePersonen(rows) {
     if (r["E-Mail"]) emails.push({ email: String(r["E-Mail"]), typ: "privat", favorit: true });
     const strasse = r["Straße + Hausnr."] || "";
     const plzOrt = ((r["PLZ"] || "") + " " + (r["Ort"] || "")).trim();
+    const vorname = r["Vorname"] || "";
+    const nachname = r["Nachname"] || "";
     return {
       id: String(r["Person-ID"]),
       typ: "person",
       anrede: r["Anrede"] || "",
-      vorname: r["Vorname"] || "",
-      nachname: r["Nachname"] || "",
+      vorname,
+      nachname,
+      name: (vorname + " " + nachname).trim(),
+      // App nutzt name als Anzeigeform
       tels,
       emails,
       strasse,
       plzOrt,
       adresseFavorit: true,
       objektZuweisungen: [],
+      rollen: [],
+      // wird in mappeZuordnungen gefüllt
       notizen: r["Notiz"] || "",
       customFelder: []
     };
@@ -1877,6 +1883,7 @@ function mappeFirmen(rows) {
       plzOrt,
       ansprechpartner: r["Ansprechpartner"] || "",
       objektZuweisungen: [],
+      rollen: [],
       mitarbeiter: [],
       notizen: r["Notiz"] || "",
       customFelder: []
@@ -1910,34 +1917,39 @@ function mappeZuordnungen(rows, kontakteMap, einheitToVe, vesMap) {
       vorsitz = true;
     }
     const status = ableiteStatus(r["Bis (Datum)"]);
+    const kontaktName = kontakt.name || ((kontakt.vorname || "") + " " + (kontakt.nachname || "")).trim();
     const zuweisung = {
-      veId,
+      objektId: veId,
       einheitId,
       rolle,
-      status,
-      von: r["Von (Datum)"] || null,
-      bis: r["Bis (Datum)"] || null
-    };
-    if (vorsitz) zuweisung.vorsitz = true;
-    kontakt.objektZuweisungen.push(zuweisung);
-    const eintrag = {
-      kontaktId: kontakt.id,
       status,
       von: r["Von (Datum)"] || "",
       bis: r["Bis (Datum)"] || ""
     };
+    if (vorsitz) zuweisung.vorsitz = true;
+    kontakt.objektZuweisungen.push(zuweisung);
     const rolleLc = rolle.toLowerCase();
     if (rolleLc.indexOf("eigent") >= 0) {
-      if (r["Grundbuch"] && String(r["Grundbuch"]).toLowerCase().indexOf("ja") >= 0) {
-        eintrag.grundbuch = true;
-      }
-      if (r["Selbstnutzer"] && String(r["Selbstnutzer"]).toLowerCase().indexOf("ja") >= 0) {
-        eintrag.selbstnutzer = true;
-      }
+      const eintrag = {
+        name: kontaktName,
+        von: r["Von (Datum)"] || "",
+        kontaktId: kontakt.id,
+        grundbuch: r["Grundbuch"] && String(r["Grundbuch"]).toLowerCase().indexOf("ja") >= 0 ? true : false,
+        selbstnutzer: r["Selbstnutzer"] && String(r["Selbstnutzer"]).toLowerCase().indexOf("ja") >= 0 ? true : false
+      };
+      if (r["Bis (Datum)"]) eintrag.bis = r["Bis (Datum)"];
       einheit.eigentuemer.push(eintrag);
     } else if (rolleLc.indexOf("mieter") >= 0) {
+      const eintrag = {
+        name: kontaktName,
+        von: r["Von (Datum)"] || "",
+        kontaktId: kontakt.id
+      };
+      if (r["Bis (Datum)"]) eintrag.bis = r["Bis (Datum)"];
       einheit.mieter.push(eintrag);
     }
+    if (!Array.isArray(kontakt.rollen)) kontakt.rollen = [];
+    if (kontakt.rollen.indexOf(rolle) < 0) kontakt.rollen.push(rolle);
     zugewiesen++;
   });
   return { zugewiesen, verwaist };
@@ -3611,6 +3623,10 @@ function EinheitZeile({ einheit, t, accent, editMode, isActive, isOver, onToggle
   const istLeerstand = !aktiverEig && !aktiverMieter;
   const istSelbst = aktiverEig && aktiverEig.selbstnutzer;
   const keinEigentuemer = !aktiverEig;
+  const nrText = einheit.nr != null ? String(einheit.nr) : "";
+  const lageText = einheit.lage != null ? String(einheit.lage) : "";
+  const flaecheText = einheit.flaeche != null ? String(einheit.flaeche) : "";
+  const meaText = einheit.mea != null ? String(einheit.mea) : "";
   return /* @__PURE__ */ React.createElement(
     "div",
     {
@@ -3644,7 +3660,7 @@ function EinheitZeile({ einheit, t, accent, editMode, isActive, isOver, onToggle
       display: "flex",
       alignItems: "center",
       justifyContent: "center"
-    } }, /* @__PURE__ */ React.createElement("span", { style: { fontSize: 11, fontWeight: 800, color: accent } }, einheit.nr.replace(/^(WE|TE|SP|GE)[\s\-_]*/, ""))), /* @__PURE__ */ React.createElement("div", { style: { flex: 1, minWidth: 0 } }, /* @__PURE__ */ React.createElement("div", { style: { fontSize: 12, fontWeight: 700, color: t.text } }, einheit.nr, einheit.lage && /* @__PURE__ */ React.createElement("span", { style: { fontWeight: 400, color: t.sub, marginLeft: 5 } }, "· ", einheit.lage)), /* @__PURE__ */ React.createElement("div", { style: { fontSize: 10, color: t.sub, display: "flex", alignItems: "center", gap: 5, flexWrap: "wrap" } }, anzeige.flaeche && einheit.flaeche && /* @__PURE__ */ React.createElement("span", null, einheit.flaeche), anzeige.mea && einheit.mea && /* @__PURE__ */ React.createElement("span", null, "· MEA ", einheit.mea), anzeige.eigentuemer && aktiverEig && /* @__PURE__ */ React.createElement("span", null, " · ET ", extractNachname(aktiverEig.name)), anzeige.mieter && aktiverMieter && /* @__PURE__ */ React.createElement("span", { style: { color: "#0080FF" } }, " · MT ", extractNachname(aktiverMieter.name)))), /* @__PURE__ */ React.createElement("div", { style: { display: "flex", gap: 3, flexShrink: 0 } }, keinEigentuemer && /* @__PURE__ */ React.createElement("span", { style: {
+    } }, /* @__PURE__ */ React.createElement("span", { style: { fontSize: 11, fontWeight: 800, color: accent } }, nrText.replace(/^(WE|TE|SP|GE)[\s\-_]*/, ""))), /* @__PURE__ */ React.createElement("div", { style: { flex: 1, minWidth: 0 } }, /* @__PURE__ */ React.createElement("div", { style: { fontSize: 12, fontWeight: 700, color: t.text } }, nrText, lageText && /* @__PURE__ */ React.createElement("span", { style: { fontWeight: 400, color: t.sub, marginLeft: 5 } }, "· ", lageText)), /* @__PURE__ */ React.createElement("div", { style: { fontSize: 10, color: t.sub, display: "flex", alignItems: "center", gap: 5, flexWrap: "wrap" } }, anzeige.flaeche && flaecheText && /* @__PURE__ */ React.createElement("span", null, flaecheText), anzeige.mea && meaText && /* @__PURE__ */ React.createElement("span", null, "· MEA ", meaText), anzeige.eigentuemer && aktiverEig && /* @__PURE__ */ React.createElement("span", null, " · ET ", extractNachname(aktiverEig.name || "")), anzeige.mieter && aktiverMieter && /* @__PURE__ */ React.createElement("span", { style: { color: "#0080FF" } }, " · MT ", extractNachname(aktiverMieter.name || "")))), /* @__PURE__ */ React.createElement("div", { style: { display: "flex", gap: 3, flexShrink: 0 } }, keinEigentuemer && /* @__PURE__ */ React.createElement("span", { style: {
       fontSize: 8,
       padding: "1px 5px",
       borderRadius: 5,
