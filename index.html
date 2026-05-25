@@ -6,7 +6,12 @@
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="theme-color" content="#07070C">
-  <title>AllesDa &mdash; Immobilienverwaltung</title>
+  <!-- Cache-Control: index.html selbst soll nie aus dem Cache geladen werden,
+       damit die aktuellste Version-Referenz auf AllesDa.js durchkommt. -->
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+  <meta http-equiv="Pragma" content="no-cache">
+  <meta http-equiv="Expires" content="0">
+  <title>AllesDa v19 &mdash; Immobilienverwaltung</title>
   <style>
     html, body {
       margin: 0; padding: 0;
@@ -54,11 +59,12 @@
   <div id="ladeIndikator">
     <div class="spinner"></div>
     <div class="titel">Alles<span class="akzent">Da</span></div>
-    <div class="sub">wird geladen&hellip;</div>
+    <div class="sub">wird geladen&hellip;  <span style="opacity: 0.5;">v19</span></div>
   </div>
 
   <script crossorigin src="https://unpkg.com/react@18.3.1/umd/react.production.min.js"></script>
   <script crossorigin src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.production.min.js"></script>
-  <script src="AllesDa.js"></script>
+  <!-- Cache-Busting durch Versions-Query: jeder Build erzeugt eine neue URL -->
+  <script src="AllesDa.js?v=19"></script>
 </body>
 </html>
